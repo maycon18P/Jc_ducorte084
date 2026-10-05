@@ -7,10 +7,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewClientCompat;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -36,10 +41,39 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
+        s.setAllowContentAccess(true);
+
+        CookieManager cm = CookieManager.getInstance();
+        cm.setAcceptCookie(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cm.setAcceptThirdPartyCookies(webView, true);
+        }
+
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .build();
 
         webView.setWebChromeClient(new WebChromeClient());
-        webView.setWebViewClient(new WebViewClient() {
-            @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        webView.setWebViewClient(new WebViewClientCompat() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                return assetLoader.shouldInterceptRequest(request.getUrl());
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri u = request.getUrl();
+                String host = u.getHost() == null ? "" : u.getHost().toLowerCase();
+
+                if (host.equals("wa.me") || host.endsWith("whatsapp.com")) {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url == null) return false;
                 Uri u = Uri.parse(url);
                 String host = u.getHost() == null ? "" : u.getHost().toLowerCase();
@@ -52,7 +86,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        webView.loadUrl("https://maycon18p.github.io/Jc_ducorte084/barber/");
+        // Conteúdo local servido por origem HTTPS interna segura.
+        webView.loadUrl("https://appassets.androidplatform.net/assets/barber/index.html");
     }
 
     @Override public void onBackPressed() {

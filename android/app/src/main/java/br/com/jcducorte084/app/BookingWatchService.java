@@ -54,7 +54,7 @@ public class BookingWatchService extends Service {
         try(BufferedReader br=new BufferedReader(new InputStreamReader(c.getInputStream(),StandardCharsets.UTF_8))){StringBuilder sb=new StringBuilder();String l;while((l=br.readLine())!=null)sb.append(l);response=sb.toString().trim();}finally{c.disconnect();}
         String marker=response;
         if(marker.isEmpty()||marker.equals("null"))marker="__none__";
-        else if(marker.length()>=2&&marker.startsWith(""")&&marker.endsWith("""))marker=marker.substring(1,marker.length()-1);
+        else if(marker.length()>=2&&marker.startsWith("\\\"")&&marker.endsWith("\\\""))marker=marker.substring(1,marker.length()-1);
         SharedPreferences p=getSharedPreferences("jc_barber",MODE_PRIVATE);
         boolean init=p.getBoolean("marker_initialized",false);String old=p.getString("latest_marker","__none__");
         if(!init){p.edit().putString("latest_marker",marker).putBoolean("marker_initialized",true).apply();return;}

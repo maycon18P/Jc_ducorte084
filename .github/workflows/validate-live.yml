@@ -1,0 +1,92 @@
+name: Validate live JC DUCORTE084
+
+on:
+  push:
+    paths:
+      - ".github/workflows/validate-live.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate live sites and Supabase
+        shell: bash
+        env:
+          SUPABASE_URL: https://pkbqmkszrmukucktlwje.supabase.co
+          SUPABASE_KEY: sb_publishable_T4FxrU0R2XPeMdAuk-PLXA_zAs2EMw-
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error, datetime
+
+          out=[]
+          def get(url, headers=None):
+              req=urllib.request.Request(url, headers=headers or {})
+              with urllib.request.urlopen(req, timeout=25) as r:
+                  return r.status, r.read().decode("utf-8","replace"), r.geturl()
+
+          def post(url, payload, headers=None):
+              h={"Content-Type":"application/json"}
+              if headers: h.update(headers)
+              req=urllib.request.Request(url, data=json.dumps(payload).encode(), headers=h, method="POST")
+              with urllib.request.urlopen(req, timeout=25) as r:
+                  return r.status, r.read().decode("utf-8","replace")
+
+          # 1. Public client site
+          s,body,final=get("https://jcducorte084.vercel.app/")
+          assert s==200, f"Cliente HTTP {s}"
+          assert "AGENDAMENTO ONLINE" in body, "Cliente sem marcador de agendamento"
+          assert "Entrar com PIN" not in body, "Cliente exibindo painel do barbeiro"
+          out.append("PASS cliente: HTTP 200 e pagina de agendamento correta")
+
+          # 2. Barber site
+          s,body,final=get("https://jcducorte084.vercel.app/barbeiro/")
+          assert s==200, f"Barbeiro HTTP {s}"
+          assert "Entrar com PIN" in body, "Barbeiro sem tela de PIN"
+          assert "Painel exclusivo do barbeiro" in body, "Barbeiro sem marcador do painel"
+          out.append("PASS barbeiro: HTTP 200 e pagina do barbeiro/PIN correta")
+
+          # 3. Supabase public read
+          key=os.environ["SUPABASE_KEY"]
+          base=os.environ["SUPABASE_URL"]
+          hdr={"apikey":key,"Authorization":"Bearer "+key}
+          s,raw,_=get(base+"/rest/v1/services?select=id,name,duration,active&active=eq.true&limit=1",hdr)
+          assert s==200, f"Supabase services HTTP {s}"
+          services=json.loads(raw)
+          assert isinstance(services,list) and services, "Nenhum servico ativo retornado"
+          svc=services[0]
+          out.append("PASS Supabase: servicos ativos acessiveis")
+
+          s,raw,_=get(base+"/rest/v1/shop_settings?select=id&limit=1",hdr)
+          assert s==200, f"Supabase settings HTTP {s}"
+          settings=json.loads(raw)
+          assert isinstance(settings,list), "shop_settings resposta invalida"
+          out.append("PASS Supabase: configuracoes publicas acessiveis")
+
+          # 4. Available-slots RPC. Empty list is okay; HTTP 200 proves RPC/signature/connectivity.
+          d=(datetime.date.today()+datetime.timedelta(days=3)).isoformat()
+          try:
+              sid=svc["id"]
+              s,raw=post(base+"/rest/v1/rpc/get_available_slots",
+                         {"p_date":d,"p_service_id":sid},hdr)
+              assert s==200, f"slots HTTP {s}"
+              slots=json.loads(raw)
+              assert isinstance(slots,list), "slots nao retornou lista"
+              out.append("PASS horarios: RPC get_available_slots respondeu HTTP 200")
+          except urllib.error.HTTPError as e:
+              detail=e.read().decode("utf-8","replace")
+              raise AssertionError(f"RPC horarios falhou HTTP {e.code}: {detail[:500]}")
+
+          # 5. Local source already carries create_booking call; do not insert a fake booking in production.
+          out.append("INFO booking: nao foi criado agendamento falso no banco de producao")
+          out.append("RESULTADO: VALIDACAO AUTOMATICA APROVADA")
+          print("\n".join(out))
+          with open("/tmp/validation.txt","w",encoding="utf-8") as f:
+              f.write("\n".join(out)+"\n")
+          PY
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: /tmp/validation.txt

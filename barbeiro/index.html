@@ -8,10 +8,33 @@
 *{box-sizing:border-box}body{margin:0;background:#0d0f13;color:#f5f5f6;font-family:Arial,sans-serif}.hidden{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:18px}.login-card,.card{background:#15181e;border:1px solid #292d36;border-radius:18px;padding:20px}.login-card{width:min(420px,100%)}h1,h2,h3,p{margin-top:0}.muted{color:#989eaa}.input{width:100%;background:#101217;color:#fff;border:1px solid #30343e;border-radius:11px;padding:12px}.form{display:grid;gap:11px}.btn,.ghost,.mini{border:0;border-radius:11px;padding:11px 13px;font-weight:700;cursor:pointer}.btn{background:#d5aa50;color:#15120a}.ghost,.mini{background:#1d2128;color:#eee;border:1px solid #30343e}.layout{display:grid;grid-template-columns:230px 1fr;min-height:100vh}.side{padding:18px;border-right:1px solid #272b34;background:#111318;position:sticky;top:0;height:100vh}.brand{font-weight:800;font-size:18px;margin-bottom:18px}.brand small{display:block;color:#9298a4;font-size:11px;margin-top:4px}.nav{display:grid;gap:7px}.nav button{background:transparent;border:1px solid transparent;color:#c5c9d1;padding:11px;text-align:left;border-radius:10px;cursor:pointer}.nav button.active{background:#282318;color:#e7c472;border-color:#4d4023}.content{padding:20px;min-width:0}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel{display:none}.panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat{background:#15181e;border:1px solid #292d36;border-radius:15px;padding:16px}.stat span{color:#969ca8;font-size:12px}.stat strong{display:block;font-size:25px;margin-top:6px}.list,.settings{display:grid;gap:9px}.appt,.setting,.client{background:#111419;border:1px solid #292d36;border-radius:14px;padding:14px}.appt-top,.setting{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.appt p,.setting span,.client p{color:#969ca8;font-size:12px}.tags,.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.tag{font-size:11px;padding:5px 8px;border-radius:999px;background:#20242c}.pending{color:#a9cbff;background:#17243a}.confirmed{color:#f2ce7b;background:#2b2518}.completed{color:#9ae3bb;background:#173023}.cancelled{color:#ffaaaa;background:#351c1c}.actions button{border:1px solid #30343e;background:#1b1f26;color:#fff;border-radius:9px;padding:8px 10px;cursor:pointer}.actions .ok{background:#26361f;color:#b9eda0}.actions .bad{background:#351c1c;color:#ffb1b1}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.compact{width:auto;min-width:150px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#eee;color:#111;padding:11px 15px;border-radius:10px;display:none;z-index:99}.toast.show{display:block}.modal{position:fixed;inset:0;background:#000a;display:none;place-items:center;padding:16px;z-index:100}.modal.show{display:grid}.modal-box{width:min(520px,100%);background:#15181e;border:1px solid #30343e;border-radius:17px;padding:18px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#8e2222;color:#fff;font-size:11px}.week{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.week label{background:#111419;border:1px solid #30343e;border-radius:9px;padding:9px;font-size:12px}@media(max-width:850px){.layout{display:block}.side{height:auto;position:static;border-right:0;border-bottom:1px solid #272b34}.nav{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:1fr 1fr}.grid2,.client-grid{grid-template-columns:1fr}.content{padding:12px}.head{align-items:flex-start}.compact{width:100%}}
 </style>
 </head><body>
-<section id="loginView" class="login"><div class="login-card"><h2>JC DUCORTE084</h2><p class="muted">Acesso exclusivo do barbeiro.</p><div class="form"><input id="email" class="input" type="email" placeholder="E-mail"><input id="password" class="input" type="password" placeholder="Senha"><button id="loginBtn" class="btn">Entrar</button><p id="loginErr" style="color:#ffaaaa"></p></div></div></section>
+<section id="loginView" class="login">
+<div class="login-card">
+  <h2>JC DUCORTE084</h2>
+  <p class="muted">Painel exclusivo do barbeiro.</p>
+
+  <div id="pinView" class="form hidden">
+    <input id="pin" class="input" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN de 4 números">
+    <button id="pinBtn" class="btn">Entrar com PIN</button>
+    <p id="pinErr" style="color:#ffaaaa"></p>
+    <button id="resetAccess" class="ghost" type="button">Redefinir PIN</button>
+  </div>
+
+  <div id="setupView" class="form hidden">
+    <p class="muted">No primeiro acesso, confirme a conta do barbeiro e escolha um PIN. Depois, neste aparelho, você entra somente com o PIN.</p>
+    <input id="email" class="input" type="email" autocomplete="username" placeholder="E-mail do barbeiro">
+    <input id="password" class="input" type="password" autocomplete="current-password" placeholder="Senha">
+    <input id="newPin" class="input" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Crie um PIN de 4 números">
+    <input id="confirmPin" class="input" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Confirme o PIN">
+    <button id="setupBtn" class="btn">Configurar PIN e entrar</button>
+    <p id="setupErr" style="color:#ffaaaa"></p>
+    <button id="backToPin" class="ghost hidden" type="button">Voltar para o PIN</button>
+  </div>
+</div>
+</section>
 <div id="app" class="layout hidden">
 <aside class="side"><div class="brand" id="brand">JC DUCORTE084<small>Painel do barbeiro</small></div><nav class="nav">
-<button class="active" data-p="dashboard">Visão geral <span id="pendingBadge" class="badge hidden">0</span></button><button data-p="agenda">Agenda</button><button data-p="services">Serviços</button><button data-p="blocks">Bloqueios</button><button data-p="clients">Clientes</button><button data-p="reports">Relatórios</button><button data-p="barbers">Barbeiros</button><button data-p="settings">Configurações</button></nav><button id="logout" class="ghost" style="margin-top:16px;width:100%">Sair</button></aside>
+<button class="active" data-p="dashboard">Visão geral <span id="pendingBadge" class="badge hidden">0</span></button><button data-p="agenda">Agenda</button><button data-p="services">Serviços</button><button data-p="blocks">Bloqueios</button><button data-p="clients">Clientes</button><button data-p="reports">Relatórios</button><button data-p="barbers">Barbeiros</button><button data-p="settings">Configurações</button></nav><button id="logout" class="ghost" style="margin-top:16px;width:100%">Bloquear painel</button></aside>
 <main class="content"><div class="head"><div><h1 id="title">Visão geral</h1><p id="sub" class="muted">Pedidos e atendimentos.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="notifyBtn" class="ghost">Ativar notificações</button><button id="refresh" class="ghost">Atualizar</button></div></div>
 <section class="panel active" data-panel="dashboard"><div class="stats"><div class="stat"><span>Pendentes</span><strong id="sPend">0</strong></div><div class="stat"><span>Confirmados hoje</span><strong id="sConf">0</strong></div><div class="stat"><span>Concluídos hoje</span><strong id="sDone">0</strong></div><div class="stat"><span>Faturamento hoje</span><strong id="sRev">R$ 0,00</strong></div></div><div class="card"><h2>Pedidos aguardando confirmação</h2><div id="pendingList" class="list"></div></div></section>
 <section class="panel" data-panel="agenda"><div class="card"><h2>Agenda</h2><div class="filters"><input id="agendaDate" class="input compact" type="date"><select id="agendaBarber" class="input compact"></select></div><div id="agendaList" class="list"></div></div></section>
@@ -24,7 +47,7 @@
 </main></div>
 <div id="toast" class="toast"></div><div id="modal" class="modal"><div class="modal-box"><div class="row"><h2 id="modalTitle">Editar</h2><button id="closeModal" class="ghost">×</button></div><div id="modalBody"></div></div></div>
 <script>
-const U="https://pkbqmkszrmukucktlwje.supabase.co",K=atob("c2JfcHVibGlzaGFibGVfVDRGeHJVMFIyWFBlTWRBdWstUExYQV96QXMyRU13LQ=="),db=supabase.createClient(U,K,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:window.localStorage}}),$=q=>document.querySelector(q),$=q=>[...document.querySelectorAll(q)];
+const U="https://pkbqmkszrmukucktlwje.supabase.co",K=atob("c2JfcHVibGlzaGFibGVfVDRGeHJVMFIyWFBlTWRBdWstUExYQV96QXMyRU13LQ=="),db=supabase.createClient(U,K,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:window.localStorage}}),$=q=>document.querySelector(q),$$=q=>[...document.querySelectorAll(q)];
 let settings=null,services=[],barbers=[],appointments=[],blocks=[];const meta={dashboard:["Visão geral","Pedidos e atendimentos."],agenda:["Agenda","Todos os horários."],services:["Serviços","Preços e duração."],blocks:["Bloqueios","Folgas e períodos indisponíveis."],clients:["Clientes","Histórico de clientes."],reports:["Relatórios","Movimento e faturamento."],barbers:["Barbeiros","Profissionais cadastrados."],settings:["Configurações","Dados da barbearia."]};
 const pad=n=>String(n).padStart(2,"0"),today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())},money=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}),pretty=v=>v?v.split("-").reverse().join("/"):"—",ph=v=>String(v||"").replace(/\D/g,""),wa=v=>{let p=ph(v);return p.startsWith("55")?p:"55"+p},svc=id=>services.find(x=>x.id===id),bar=id=>barbers.find(x=>x.id===id);
 function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>e.classList.remove("show"),2200)}function modal(t,h){$("#modalTitle").textContent=t;$("#modalBody").innerHTML=h;$("#modal").classList.add("show")}function closeModal(){$("#modal").classList.remove("show")}function status(s){return({pending:"Aguardando",confirmed:"Confirmado",completed:"Concluído",cancelled:"Cancelado"}[s]||s)}
@@ -55,10 +78,89 @@ function page(p){$$(".nav button").forEach(b=>b.classList.toggle("active",b.data
 $$(".nav button").forEach(b=>b.onclick=()=>page(b.dataset.p));$("#agendaDate").value=today();$("#agendaDate").onchange=renderAgenda;$("#agendaBarber").onchange=renderAgenda;$("#blockDate").value=today();$("#blockStart").value="12:00";$("#blockEnd").value="13:00";$("#clientSearch").oninput=renderClients;$("#rStart").onchange=renderReports;$("#rEnd").onchange=renderReports;$("#refresh").onclick=load;$("#closeModal").onclick=closeModal;$("#modal").onclick=e=>{if(e.target.id==="modal")closeModal()}
 $("#notifyBtn").onclick=async()=>{if(!("Notification"in window)){toast("Seu navegador não suporta notificações.");return}const p=await Notification.requestPermission();$("#notifyBtn").textContent=p==="granted"?"Notificações ativadas":"Ativar notificações";toast(p==="granted"?"Notificações ativadas.":"Permissão de notificação não concedida.");};
 if("Notification"in window&&Notification.permission==="granted")$("#notifyBtn").textContent="Notificações ativadas";
-$("#loginBtn").onclick=async()=>{const btn=$("#loginBtn"),err=$("#loginErr"),email=$("#email").value.trim(),password=$("#password").value;err.textContent="";if(!email||!password){err.textContent="Digite o e-mail e a senha.";return}btn.disabled=true;btn.textContent="Entrando...";try{const {data,error}=await db.auth.signInWithPassword({email,password});if(error){err.textContent="Não foi possível entrar: "+(error.message||"revise o e-mail e a senha.");return}if(data?.session){$("#loginView").classList.add("hidden");$("#app").classList.remove("hidden");await load();sub();}}catch(e){err.textContent="Falha de conexão. Verifique a internet e tente novamente.";}finally{btn.disabled=false;btn.textContent="Entrar"}};$("#logout").onclick=()=>db.auth.signOut();
-function beep(){try{const A=window.AudioContext||window.webkitAudioContext,a=new A(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.08;o.start();setTimeout(()=>{o.stop();a.close()},450)}catch(e){}}
-function browserNotify(){if("Notification"in window&&Notification.permission==="granted"){new Notification("Novo agendamento recebido ✂",{body:"Abra o painel da JC DUCORTE084 para confirmar.",icon:"/icon.svg"})}}
-function sub(){if(window.__jcSub)return;window.__jcSub=true;db.channel("appointments").on("postgres_changes",{event:"INSERT",schema:"public",table:"appointments"},async()=>{toast("Novo agendamento recebido!");beep();browserNotify();await load()}).subscribe()}
-db.auth.onAuthStateChange(async(_,session)=>{$("#loginView").classList.toggle("hidden",!!session);$("#app").classList.toggle("hidden",!session);if(session){await load();sub()}});db.auth.getSession().then(async({data:{session}})=>{if(session){$("#loginView").classList.add("hidden");$("#app").classList.remove("hidden");await load();sub()}});
+async function pinHash(pin){
+  const bytes=new TextEncoder().encode("JC_DUCORTE084:"+pin);
+  const digest=await crypto.subtle.digest("SHA-256",bytes);
+  return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function authViews(mode,msg=""){
+  $("#loginView").classList.remove("hidden");
+  $("#app").classList.add("hidden");
+  $("#pinView").classList.toggle("hidden",mode!=="pin");
+  $("#setupView").classList.toggle("hidden",mode!=="setup");
+  $("#backToPin").classList.toggle("hidden",!localStorage.getItem("jc_pin_hash"));
+  if(mode==="pin") $("#pinErr").textContent=msg;
+  if(mode==="setup") $("#setupErr").textContent=msg;
+}
+async function enterPanel(){
+  $("#loginView").classList.add("hidden");
+  $("#app").classList.remove("hidden");
+  await load();
+  sub();
+}
+async function chooseAccessView(){
+  const {data:{session}}=await db.auth.getSession();
+  const hasPin=!!localStorage.getItem("jc_pin_hash");
+  const unlocked=sessionStorage.getItem("jc_pin_unlocked")==="1";
+  if(session&&hasPin&&unlocked){await enterPanel();return}
+  if(session&&hasPin){authViews("pin");return}
+  authViews("setup");
+}
+$("#pinBtn").onclick=async()=>{
+  const pin=$("#pin").value.trim(),err=$("#pinErr");
+  err.textContent="";
+  if(!/^\d{4}$/.test(pin)){err.textContent="Digite os 4 números do PIN.";return}
+  const saved=localStorage.getItem("jc_pin_hash");
+  if(!saved){authViews("setup");return}
+  if(await pinHash(pin)!==saved){err.textContent="PIN incorreto.";$("#pin").value="";return}
+  const {data:{session}}=await db.auth.getSession();
+  if(!session){
+    authViews("setup","A sessão segura expirou. Confirme a conta uma vez para reativar o PIN.");
+    return;
+  }
+  sessionStorage.setItem("jc_pin_unlocked","1");
+  $("#pin").value="";
+  await enterPanel();
+};
+$("#setupBtn").onclick=async()=>{
+  const btn=$("#setupBtn"),err=$("#setupErr");
+  const email=$("#email").value.trim(),password=$("#password").value;
+  const pin=$("#newPin").value.trim(),confirmPin=$("#confirmPin").value.trim();
+  err.textContent="";
+  if(!email||!password){err.textContent="Digite o e-mail e a senha da conta do barbeiro.";return}
+  if(!/^\d{4}$/.test(pin)){err.textContent="O PIN precisa ter exatamente 4 números.";return}
+  if(pin!==confirmPin){err.textContent="Os PINs não conferem.";return}
+  btn.disabled=true;btn.textContent="Configurando...";
+  try{
+    const {data,error}=await db.auth.signInWithPassword({email,password});
+    if(error){err.textContent="Não foi possível confirmar a conta: "+(error.message||"revise os dados.");return}
+    if(!data?.session){err.textContent="A sessão não foi criada. Tente novamente.";return}
+    localStorage.setItem("jc_pin_hash",await pinHash(pin));
+    sessionStorage.setItem("jc_pin_unlocked","1");
+    $("#password").value="";$("#newPin").value="";$("#confirmPin").value="";
+    await enterPanel();
+  }catch(e){
+    err.textContent="Falha de conexão. Verifique a internet e tente novamente.";
+  }finally{
+    btn.disabled=false;btn.textContent="Configurar PIN e entrar";
+  }
+};
+$("#resetAccess").onclick=()=>{
+  localStorage.removeItem("jc_pin_hash");
+  sessionStorage.removeItem("jc_pin_unlocked");
+  authViews("setup","Crie um novo PIN confirmando a conta.");
+};
+$("#backToPin").onclick=()=>authViews("pin");
+$("#logout").onclick=()=>{
+  sessionStorage.removeItem("jc_pin_unlocked");
+  authViews("pin","Painel bloqueado.");
+};
+db.auth.onAuthStateChange(async(event,session)=>{
+  if(!session){
+    sessionStorage.removeItem("jc_pin_unlocked");
+    return;
+  }
+});
+chooseAccessView();
 if("serviceWorker"in navigator){navigator.serviceWorker.register("/barbeiro/sw.js").catch(()=>{})}
 </script></body></html>

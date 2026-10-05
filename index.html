@@ -1,32 +1,223 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f1115"><title>JC DUCORTE084 | Agendamento</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>JC DUCORTE084 | Agendamento</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0d0f13;color:#f5f5f6;font-family:Arial,sans-serif}.wrap{max-width:920px;margin:auto;padding:18px}.hero{padding:30px 24px;border-radius:20px;background:linear-gradient(135deg,#171a21,#0e1014);border:1px solid #272b34;margin-bottom:16px}.ey{color:#d7ad55;font-size:12px;font-weight:800;letter-spacing:.18em}.hero h1{font-size:36px;margin:8px 0}.hero p{color:#9ea3ad;margin:0;line-height:1.5}.card{background:#15181e;border:1px solid #292d36;border-radius:18px;padding:20px;margin-bottom:14px}.step{display:flex;align-items:center;gap:10px;margin-bottom:14px}.n{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#2a2417;color:#e7c472;font-weight:800}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.service,.slot{border:1px solid #30343e;background:#1b1e25;color:#fff;border-radius:13px;padding:14px;cursor:pointer}.service strong,.service span{display:block}.service span{font-size:12px;color:#a9adb6;margin-top:5px}.service.sel,.slot.sel{border-color:#d2a548;background:#292318}.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.input{width:100%;background:#101217;color:#fff;border:1px solid #30343e;border-radius:12px;padding:13px;outline:none}.form{display:grid;gap:12px}.btn{width:100%;border:0;border-radius:13px;padding:14px;background:#d5aa50;color:#15120a;font-weight:800;cursor:pointer}.summary{display:grid;gap:8px;margin:14px 0}.summary div{display:flex;justify-content:space-between;border-bottom:1px dashed #30343e;padding:7px 0}.muted{color:#9ea3ad;font-size:13px}.msg{display:none;padding:16px;border-radius:14px;margin-top:12px;background:#14251b;color:#a8e8bc}.msg.show{display:block}.err{background:#2b1717;color:#ffb3b3}@media(max-width:650px){.wrap{padding:12px}.hero{padding:22px}.hero h1{font-size:28px}.grid{grid-template-columns:1fr 1fr}.slots{grid-template-columns:repeat(3,1fr)}}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0f13;color:#f5f5f6;font-family:Arial,sans-serif}
+button,input{font:inherit}
+.wrap{max-width:920px;margin:auto;padding:18px}
+.hero{padding:30px 24px;border-radius:20px;background:linear-gradient(135deg,#171a21,#0e1014);border:1px solid #272b34;margin-bottom:16px}
+.ey{color:#d7ad55;font-size:12px;font-weight:800;letter-spacing:.18em}
+.hero h1{font-size:36px;margin:8px 0}
+.hero p{color:#9ea3ad;margin:0;line-height:1.5}
+.card{background:#15181e;border:1px solid #292d36;border-radius:18px;padding:20px;margin-bottom:14px}
+.step{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.n{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#2a2417;color:#e7c472;font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.service,.slot,.day{border:1px solid #30343e;background:#1b1e25;color:#fff;border-radius:13px;padding:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.service strong,.service span{display:block}
+.service span{font-size:12px;color:#a9adb6;margin-top:5px}
+.service.sel,.slot.sel,.day.sel{border-color:#d2a548;background:#292318;box-shadow:0 0 0 1px #d2a548 inset}
+.service:active,.slot:active,.day:active{transform:scale(.98)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.day{padding:10px 6px;text-align:center;min-height:68px}
+.day small,.day b{display:block}
+.day small{color:#9ea3ad;font-size:10px;text-transform:uppercase;margin-bottom:4px}
+.day b{font-size:17px}
+.day.off{opacity:.35;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.slot{padding:13px 8px;text-align:center}
+.input{width:100%;background:#101217;color:#fff;border:1px solid #30343e;border-radius:12px;padding:13px;outline:none;color-scheme:dark}
+.form{display:grid;gap:12px}
+.btn{width:100%;border:0;border-radius:13px;padding:14px;background:#d5aa50;color:#15120a;font-weight:800;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.summary{display:grid;gap:8px;margin:14px 0}
+.summary div{display:flex;justify-content:space-between;border-bottom:1px dashed #30343e;padding:7px 0;gap:12px}
+.muted{color:#9ea3ad;font-size:13px;line-height:1.45}
+.msg{display:none;padding:16px;border-radius:14px;margin-top:12px;background:#14251b;color:#a8e8bc}
+.msg.show{display:block}.err{background:#2b1717;color:#ffb3b3}
+.date-more{margin-top:12px;padding-top:12px;border-top:1px solid #292d36}
+.loading{grid-column:1/-1}
+@media(max-width:700px){
+ .wrap{padding:12px}.hero{padding:22px}.hero h1{font-size:28px}
+ .grid{grid-template-columns:1fr 1fr}.slots{grid-template-columns:repeat(3,1fr)}
+ .days{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:380px){.days{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
-<body><main class="wrap">
-<section class="hero"><span class="ey">AGENDAMENTO ONLINE</span><h1 id="shopName">JC DUCORTE084</h1><p>Escolha seu serviço, data e horário. Depois aguarde a confirmação pelo WhatsApp.</p></section>
-<section class="card"><div class="step"><span class="n">1</span><strong>Escolha o serviço</strong></div><div id="services" class="grid"></div></section>
-<section class="card"><div class="step"><span class="n">2</span><strong>Escolha a data</strong></div><input id="date" class="input" type="date"><p id="hours" class="muted"></p></section>
-<section class="card"><div class="step"><span class="n">3</span><strong>Escolha o horário</strong></div><div id="slots" class="slots"><p class="muted">Selecione serviço e data.</p></div></section>
-<section class="card"><div class="step"><span class="n">4</span><strong>Seus dados</strong></div><div class="summary"><div><span>Serviço</span><b id="sumService">—</b></div><div><span>Data</span><b id="sumDate">—</b></div><div><span>Horário</span><b id="sumTime">—</b></div><div><span>Valor</span><b id="sumPrice">R$ 0,00</b></div></div><div class="form"><input id="name" class="input" placeholder="Seu nome"><input id="phone" class="input" inputmode="tel" placeholder="WhatsApp (DDD + número)"><button id="book" class="btn">Agendar</button></div><div id="msg" class="msg"></div></section>
+<body>
+<main class="wrap">
+<section class="hero">
+ <span class="ey">AGENDAMENTO ONLINE</span>
+ <h1 id="shopName">JC DUCORTE084</h1>
+ <p>Escolha seu serviço, data e horário. Depois aguarde a confirmação pelo WhatsApp.</p>
+</section>
+
+<section class="card">
+ <div class="step"><span class="n">1</span><strong>Escolha o serviço</strong></div>
+ <div id="services" class="grid"><p class="muted loading">Carregando serviços...</p></div>
+</section>
+
+<section class="card">
+ <div class="step"><span class="n">2</span><strong>Escolha a data</strong></div>
+ <p class="muted">Toque em um dos dias abaixo:</p>
+ <div id="days" class="days"></div>
+ <div class="date-more">
+   <label class="muted" for="date">Ou escolha outra data:</label>
+   <input id="date" class="input" type="date">
+ </div>
+</section>
+
+<section class="card">
+ <div class="step"><span class="n">3</span><strong>Escolha o horário</strong></div>
+ <div id="slots" class="slots"><p class="muted loading">Escolha primeiro o serviço e a data.</p></div>
+</section>
+
+<section class="card">
+ <div class="step"><span class="n">4</span><strong>Seus dados</strong></div>
+ <div class="summary">
+   <div><span>Serviço</span><b id="sumService">—</b></div>
+   <div><span>Data</span><b id="sumDate">—</b></div>
+   <div><span>Horário</span><b id="sumTime">—</b></div>
+   <div><span>Valor</span><b id="sumPrice">R$ 0,00</b></div>
+ </div>
+ <div class="form">
+   <input id="name" class="input" autocomplete="name" placeholder="Seu nome">
+   <input id="phone" class="input" inputmode="tel" autocomplete="tel" placeholder="WhatsApp (DDD + número)">
+   <button id="book" class="btn">Agendar</button>
+ </div>
+ <div id="msg" class="msg"></div>
+</section>
 </main>
+
 <script>
 const U="https://pkbqmkszrmukucktlwje.supabase.co";
 const K=atob("c2JfcHVibGlzaGFibGVfVDRGeHJVMFIyWFBlTWRBdWstUExYQV96QXMyRU13LQ==");
-const db=supabase.createClient(U,K),$=q=>document.querySelector(q);
+const db=supabase.createClient(U,K);
+const $=q=>document.querySelector(q);
 let settings=null,services=[],sel={service:null,date:null,time:null};
+
 const money=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const pretty=v=>v?v.split("-").reverse().join("/"):"—";
-function renderSummary(){const s=services.find(x=>x.id===sel.service);$("#sumService").textContent=s?.name||"—";$("#sumDate").textContent=pretty(sel.date);$("#sumTime").textContent=sel.time||"—";$("#sumPrice").textContent=money(s?.price||0)}
-function renderServices(){$("#services").innerHTML=services.map(s=>'<button class="service '+(sel.service===s.id?'sel':'')+'" data-id="'+s.id+'"><strong>'+s.name+'</strong><span>'+s.duration+' min • '+money(s.price)+'</span></button>').join("");document.querySelectorAll(".service").forEach(b=>b.onclick=()=>{sel.service=b.dataset.id;sel.time=null;renderServices();renderSummary();loadSlots()})}
-async function loadSlots(){const wrap=$("#slots");if(!sel.service||!sel.date){wrap.innerHTML='<p class="muted">Selecione serviço e data.</p>';return}wrap.innerHTML='<p class="muted">Carregando...</p>';const {data,error}=await db.rpc("get_available_slots",{p_date:sel.date,p_service_id:sel.service});if(error){wrap.innerHTML='<p class="muted">Não foi possível carregar horários.</p>';return}wrap.innerHTML=data?.length?data.map(x=>'<button class="slot '+(sel.time===x.slot_time?'sel':'')+'" data-time="'+x.slot_time+'">'+x.slot_time+'</button>').join(""):'<p class="muted">Nenhum horário disponível.</p>';document.querySelectorAll(".slot").forEach(b=>b.onclick=()=>{sel.time=b.dataset.time;renderSummary();loadSlots()})}
-async function init(){const [{data:s},{data:sv}]=await Promise.all([db.from("shop_settings").select("*").eq("id",1).single(),db.from("services").select("*").eq("active",true).order("name")]);settings=s;services=sv||[];$("#shopName").textContent=settings?.shop_name||"JC DUCORTE084";$("#hours").textContent=settings?("Atendimento: "+String(settings.open_time).slice(0,5)+" às "+String(settings.close_time).slice(0,5)):"";renderServices()}
-$("#date").min=new Date().toISOString().slice(0,10);$("#date").onchange=e=>{sel.date=e.target.value;sel.time=null;renderSummary();loadSlots()};
-$("#book").onclick=async()=>{const name=$("#name").value.trim(),phone=$("#phone").value.trim(),msg=$("#msg");msg.className="msg";if(!sel.service||!sel.date||!sel.time||name.length<2||phone.replace(/\D/g,"").length<10){msg.textContent="Preencha serviço, data, horário, nome e WhatsApp.";msg.className="msg show err";return}$("#book").disabled=true;$("#book").textContent="Enviando...";const {error}=await db.rpc("create_booking",{p_service_id:sel.service,p_date:sel.date,p_time:sel.time,p_client_name:name,p_client_phone:phone});$("#book").disabled=false;$("#book").textContent="Agendar";if(error){msg.textContent=error.message||"Não foi possível agendar.";msg.className="msg show err";await loadSlots();return}msg.textContent="Pedido enviado! Aguarde a confirmação da barbearia pelo WhatsApp.";msg.className="msg show";$("#name").value="";$("#phone").value="";sel.time=null;renderSummary();await loadSlots()};
+const pad=n=>String(n).padStart(2,"0");
+const localYmd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayYmd=()=>localYmd(new Date());
+
+function showMsg(text,error=false){
+ const m=$("#msg"); m.textContent=text; m.className="msg show"+(error?" err":"");
+}
+function renderSummary(){
+ const s=services.find(x=>String(x.id)===String(sel.service));
+ $("#sumService").textContent=s?.name||"—";
+ $("#sumDate").textContent=pretty(sel.date);
+ $("#sumTime").textContent=sel.time||"—";
+ $("#sumPrice").textContent=money(s?.price||0);
+}
+function renderServices(){
+ if(!services.length){
+   $("#services").innerHTML='<p class="muted loading">Nenhum serviço disponível no momento.</p>';
+   return;
+ }
+ $("#services").innerHTML=services.map(s=>
+   '<button type="button" class="service '+(String(sel.service)===String(s.id)?'sel':'')+'" data-id="'+s.id+'">'+
+   '<strong>'+s.name+'</strong><span>'+s.duration+' min • '+money(s.price)+'</span></button>'
+ ).join("");
+ document.querySelectorAll(".service").forEach(b=>b.addEventListener("click",()=>{
+   sel.service=b.dataset.id; sel.time=null; renderServices(); renderSummary(); loadSlots();
+ }));
+}
+function isWorkDay(date){
+ const wd=settings?.work_days;
+ if(!Array.isArray(wd)||!wd.length) return true;
+ return wd.map(Number).includes(date.getDay());
+}
+function renderDays(){
+ const wrap=$("#days"),parts=[];
+ let shown=0;
+ for(let i=0;i<30 && shown<14;i++){
+   const d=new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()+i);
+   if(!isWorkDay(d)) continue;
+   shown++;
+   const ymd=localYmd(d);
+   const wk=d.toLocaleDateString("pt-BR",{weekday:"short"}).replace(".","");
+   const dm=d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+   parts.push('<button type="button" class="day '+(sel.date===ymd?'sel':'')+'" data-date="'+ymd+'"><small>'+wk+'</small><b>'+dm+'</b></button>');
+ }
+ wrap.innerHTML=parts.join("")||'<p class="muted loading">Nenhuma data disponível.</p>';
+ document.querySelectorAll(".day").forEach(b=>b.addEventListener("click",()=>{
+   sel.date=b.dataset.date; sel.time=null; $("#date").value=sel.date;
+   renderDays(); renderSummary(); loadSlots();
+ }));
+}
+function normalizeSlot(x){
+ const v=typeof x==="string"?x:(x?.slot_time??x?.time??x?.get_available_slots??"");
+ return String(v).slice(0,5);
+}
+async function loadSlots(){
+ const wrap=$("#slots");
+ if(!sel.service||!sel.date){
+   wrap.innerHTML='<p class="muted loading">Escolha primeiro o serviço e a data.</p>'; return;
+ }
+ wrap.innerHTML='<p class="muted loading">Carregando horários...</p>';
+ const {data,error}=await db.rpc("get_available_slots",{p_date:sel.date,p_service_id:sel.service});
+ if(error){
+   console.error("get_available_slots:",error);
+   wrap.innerHTML='<p class="muted loading">Não foi possível carregar os horários. Tente novamente em alguns segundos.</p>';
+   return;
+ }
+ const slots=(data||[]).map(normalizeSlot).filter(Boolean);
+ if(!slots.length){
+   wrap.innerHTML='<p class="muted loading">Nenhum horário disponível para este dia.</p>'; return;
+ }
+ wrap.innerHTML=slots.map(t=>'<button type="button" class="slot '+(sel.time===t?'sel':'')+'" data-time="'+t+'">'+t+'</button>').join("");
+ document.querySelectorAll(".slot").forEach(b=>b.addEventListener("click",()=>{
+   sel.time=b.dataset.time; renderSummary(); loadSlots();
+ }));
+}
+async function init(){
+ $("#date").min=todayYmd();
+ const [{data:s,error:se},{data:sv,error:sve}]=await Promise.all([
+   db.from("shop_settings").select("*").eq("id",1).single(),
+   db.from("services").select("*").eq("active",true).order("name")
+ ]);
+ if(se) console.error("settings:",se);
+ if(sve) console.error("services:",sve);
+ settings=s||null; services=sv||[];
+ $("#shopName").textContent=settings?.shop_name||"JC DUCORTE084";
+ renderServices(); renderDays(); renderSummary();
+}
+$("#date").addEventListener("change",e=>{
+ if(!e.target.value)return;
+ sel.date=e.target.value; sel.time=null; renderDays(); renderSummary(); loadSlots();
+});
+$("#book").addEventListener("click",async()=>{
+ const name=$("#name").value.trim(),phone=$("#phone").value.trim(),digits=phone.replace(/\D/g,"");
+ if(!sel.service){showMsg("Escolha um serviço.",true);return}
+ if(!sel.date){showMsg("Escolha uma data.",true);return}
+ if(!sel.time){showMsg("Escolha um horário.",true);return}
+ if(name.length<2){showMsg("Digite seu nome.",true);return}
+ if(digits.length<10){showMsg("Digite um WhatsApp válido com DDD.",true);return}
+
+ const btn=$("#book"); btn.disabled=true; btn.textContent="Enviando...";
+ const {error}=await db.rpc("create_booking",{
+   p_service_id:sel.service,p_date:sel.date,p_time:sel.time,p_client_name:name,p_client_phone:phone
+ });
+ btn.disabled=false; btn.textContent="Agendar";
+ if(error){
+   console.error("create_booking:",error);
+   showMsg(error.message||"Não foi possível agendar. Escolha outro horário.",true);
+   sel.time=null; renderSummary(); await loadSlots(); return;
+ }
+ showMsg("Pedido enviado! Aguarde a confirmação da barbearia pelo WhatsApp.");
+ $("#name").value=""; $("#phone").value=""; sel.time=null; renderSummary(); await loadSlots();
+});
 init();
-</script></body></html>
+</script>
+</body>
+</html>

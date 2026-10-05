@@ -34,14 +34,8 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
-        s.setAllowFileAccess(true);
-        s.setAllowContentAccess(true);
         s.setMediaPlaybackRequiresUserGesture(false);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            s.setAllowFileAccessFromFileURLs(true);
-            s.setAllowUniversalAccessFromFileURLs(true);
-        }
+        s.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -51,17 +45,14 @@ public class MainActivity extends Activity {
                 String host = u.getHost() == null ? "" : u.getHost().toLowerCase();
 
                 if (host.equals("wa.me") || host.endsWith("whatsapp.com")) {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, u));
-                    } catch (Exception ignored) {}
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
                     return true;
                 }
                 return false;
             }
         });
 
-        // Painel embarcado: abre mesmo sem depender do endereço da hospedagem.
-        webView.loadUrl("file:///android_asset/barber/index.html");
+        webView.loadUrl("https://jcducorte084.vercel.app/app/");
     }
 
     @Override public void onBackPressed() {

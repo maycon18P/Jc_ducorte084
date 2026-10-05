@@ -3,21 +3,8 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "rewrites": [
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
-      "destination": "/barbeiro/index.html"
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
-      "destination": "/barbeiro/manifest.webmanifest"
-    },
-    {
-      "source": "/sw.js",
-      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
-      "destination": "/barbeiro/sw.js"
-    },
+    { "source": "/barbeiro", "destination": "/barbeiro/index.html" },
+    { "source": "/barbeiro/", "destination": "/barbeiro/index.html" },
     { "source": "/app", "destination": "/barbeiro/index.html" },
     { "source": "/app/", "destination": "/barbeiro/index.html" }
   ]

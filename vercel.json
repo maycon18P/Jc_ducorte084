@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "rewrites": [
-    { "source": "/app", "destination": "/barber/index.html" }
+    { "source": "/app", "destination": "/barber/index.html" },
+    { "source": "/app/", "destination": "/barber/index.html" }
   ]
 }

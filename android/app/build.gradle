@@ -1,0 +1,23 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'br.com.jcducorte084.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'br.com.jcducorte084.app'
+        minSdk 24
+        targetSdk 33
+        versionCode 3
+        versionName '3.0.0'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ''
+            versionNameSuffix ''
+        }
+    }
+}

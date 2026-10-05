@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        webView.loadUrl("https://jcducorte084.vercel.app/app/");
+        webView.loadUrl("https://maycon18p.github.io/Jc_ducorte084/barber/");
     }
 
     @Override public void onBackPressed() {

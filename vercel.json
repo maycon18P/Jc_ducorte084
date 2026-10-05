@@ -1,8 +1,24 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": true,
   "rewrites": [
-    { "source": "/app", "destination": "/barber/index.html" },
-    { "source": "/app/", "destination": "/barber/index.html" }
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
+      "destination": "/barbeiro/index.html"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
+      "destination": "/barbeiro/manifest.webmanifest"
+    },
+    {
+      "source": "/sw.js",
+      "has": [{ "type": "host", "value": "jcducorte084-barbeiro.vercel.app" }],
+      "destination": "/barbeiro/sw.js"
+    },
+    { "source": "/app", "destination": "/barbeiro/index.html" },
+    { "source": "/app/", "destination": "/barbeiro/index.html" }
   ]
 }

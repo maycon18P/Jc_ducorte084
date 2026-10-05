@@ -33,6 +33,17 @@ public class MainActivity extends Activity {
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
+            private boolean fallbackUsed = false;
+
+            @Override public void onReceivedError(WebView view, android.webkit.WebResourceRequest request, android.webkit.WebResourceError error) {
+                if (!fallbackUsed && request != null && request.isForMainFrame()) {
+                    fallbackUsed = true;
+                    view.loadUrl("https://maycon18p.github.io/Jc_ducorte084/barber/");
+                    return;
+                }
+                super.onReceivedError(view, request, error);
+            }
+
             @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url == null) return false;
                 Uri u = Uri.parse(url);
@@ -44,7 +55,7 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
-        webView.loadUrl("https://maycon18p.github.io/Jc_ducorte084/barber/");
+        webView.loadUrl("https://jcducorte084.vercel.app/app/");
     }
 
     @Override public void onBackPressed() {
